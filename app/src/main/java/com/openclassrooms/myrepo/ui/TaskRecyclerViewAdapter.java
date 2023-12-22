@@ -82,6 +82,13 @@ public class TaskRecyclerViewAdapter extends ListAdapter<Task, TaskRecyclerViewA
 
 
             }
+
+
+        /**
+         *
+         * @param dueTime date d'échéance de la tâche
+         * @return valeur de progression  en pourcentage
+         */
         private int calculateProgress (Date dueTime) {
 
             Calendar calendarToday = Calendar.getInstance();
