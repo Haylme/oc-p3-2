@@ -8,8 +8,14 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.openclassrooms.myrepo.R;
 import com.openclassrooms.myrepo.model.Task;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * Un adaptateur pour afficher la liste de tâches dans un RecyclerView.
@@ -41,6 +47,9 @@ public class TaskRecyclerViewAdapter extends ListAdapter<Task, TaskRecyclerViewA
     static class ViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView factTextView;
+        private final TextView dueTimeTextView;
+        private final LinearProgressIndicator progressIndicator;
+
 
         /**
          * Constructeur du ViewHolder.
@@ -48,6 +57,10 @@ public class TaskRecyclerViewAdapter extends ListAdapter<Task, TaskRecyclerViewA
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             factTextView = itemView.findViewById(R.id.task_description);
+            dueTimeTextView =itemView.findViewById(R.id.task_duetime);
+            progressIndicator =itemView.findViewById(R.id.progress_horizontal);
+
+
         }
 
         /**
@@ -57,13 +70,57 @@ public class TaskRecyclerViewAdapter extends ListAdapter<Task, TaskRecyclerViewA
          */
         public void bind(Task task) {
             factTextView.setText(task.getDescription());
+
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.FRANCE);
+            String formattedDuetime = dateFormat.format(task.getDueTime());
+            dueTimeTextView.setText("date limite :" + formattedDuetime);
+
+            int progress = calculateProgress(task.getDueTime());
+            progressIndicator.setProgress(progress);
+
+
+
+            }
+        private int calculateProgress (Date dueTime) {
+
+            Calendar calendarToday = Calendar.getInstance();
+            calendarToday.set(Calendar.HOUR_OF_DAY, 0);
+
+            calendarToday.set(Calendar.MINUTE, 0);
+
+            calendarToday.set(Calendar.SECOND, 0);
+
+            calendarToday.set(Calendar.MILLISECOND, 0);
+
+
+            Calendar calendarDueTime = Calendar.getInstance();
+
+            calendarDueTime.setTime(dueTime);
+
+            calendarDueTime.set(Calendar.HOUR_OF_DAY, 0);
+
+            calendarDueTime.set(Calendar.MINUTE, 0);
+
+            calendarDueTime.set(Calendar.SECOND, 0);
+
+            calendarDueTime.set(Calendar.MILLISECOND, 0);
+
+
+            int daysDifference = (int) ((calendarDueTime.getTimeInMillis() - calendarToday.getTimeInMillis()) / (24 * 60 * 60 * 1000));
+
+            return 100 - (daysDifference * 10);
         }
+
+
+        }
+
     }
 
     /**
      * Callback pour la comparaison des éléments de la liste.
      */
-    private static class ItemCallback extends DiffUtil.ItemCallback<Task> {
+     class ItemCallback extends DiffUtil.ItemCallback<Task> {
         @Override
         public boolean areItemsTheSame(@NonNull Task oldItem, @NonNull Task newItem) {
             return oldItem.getDescription().equals(newItem.getDescription());
@@ -74,4 +131,4 @@ public class TaskRecyclerViewAdapter extends ListAdapter<Task, TaskRecyclerViewA
             return oldItem.equals(newItem);
         }
     }
-}
+

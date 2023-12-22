@@ -15,7 +15,9 @@ public class TaskApi {
     /**
      * Récupère une liste de tâches simulées depuis l'API.
      *
-     * @return Une liste de tâches simulées avec des descriptions pré-définies.
+     * commence la première tâche à la date du jour (calendar) et récupère la date .
+     *
+     * @return Une liste de tâches simulées avec des descriptions pré-définies et les dates des tâches.
      */
     public List<Task> getTasks() {
         // Simule la récupération des tâches depuis une API
